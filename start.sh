@@ -37,16 +37,6 @@ deprecated()
     echo "------------------------------------------"
 }
 
-planefinder_error()
-{
-    echo "------------------------------------------"
-    echo "PLANEFINDER ERROR"
-    echo "Missing required Planefinder variables - \$PF_SHARECODE \$LAT \$LONG"
-    echo "Connect to http://<your_rpi_ip>:30053 to config and claim a sharecode"
-    echo "Add variable PF_SHARECODE to Resin.io device variables once claimed."
-    echo "------------------------------------------"
-}
-
 flightradar24_error()
 {
     echo "------------------------------------------"
@@ -125,40 +115,6 @@ fi
 
 # Unload the driver module to allow access to dongle
 rmmod dvb_usb_rtl28xxu
-
-# ==========================================
-# PLANEFINDER
-# ==========================================
-# See https://planefinder.net/sharing/client
-#
-# Feed Status: https://planefinder.net/sharing/account
-#
-# Planefinder is started by systemd
-# - /run/systemd/generator.late/pfclient.service
-
-echo
-echo ------------------------------------------
-echo PLANEFINDER
-echo ------------------------------------------
-
-PF_CLIENT="/usr/bin/pfclient"
-PF_CLIENT_CFG="/etc/pfclient-config.json"
-
-if [[ -x ${PF_CLIENT} ]] && [[ -w ${PF_CLIENT_CFG} ]]; then
-    if [[ ! -z ${PF_SHARECODE} ]] && \
-       [[ ! -z ${LONG} ]] && \
-       [[ ! -z ${LAT} ]]; then
-        sed -i "s/PF_SHARECODE/$PF_SHARECODE/" ${PF_CLIENT_CFG}
-        sed -i "s/LONG/$LONG/" ${PF_CLIENT_CFG}
-        sed -i "s/LAT/$LAT/" ${PF_CLIENT_CFG}
-    else
-        planefinder_error
-    fi
-    # Show the Planefinder configuration
-    echo "CONFIG: Planefinder"
-    cat ${PF_CLIENT_CFG}
-    service pfclient restart
-fi
 
 # ==========================================
 # FLIGHTRADAR24
