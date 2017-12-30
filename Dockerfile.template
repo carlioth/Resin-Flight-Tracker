@@ -49,6 +49,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN piaware-config allow-auto-updates yes && \
     piaware-config allow-manual-updates yes
 
+# Download and install Planefinder client
+WORKDIR /tmp
+RUN wget $(wget -qO- https://planefinder.net/sharing/client | egrep armhf.deb | awk -F\" '{print $2}') && \
+    dpkg -i pfclient*armhf.deb
+COPY ./pfclient-config.json /etc/pfclient-config.json
+
 # Download and install FlightRadar24 client (http://repo.feed.flightradar24.com/install_fr24_rpi.sh)
 WORKDIR /tmp
 # Import GPG key for the APT repository
